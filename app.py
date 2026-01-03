@@ -13,7 +13,7 @@ from httpx import Proxy
 TIKTOK_USERNAME = os.environ.get("TIKTOK_USERNAME", "aliviamor")
 FLASK_PORT = int(os.environ.get("PORT", 10000))
 SESSION_ID = os.environ.get("TIKTOK_SESSION_ID", "eaf98b4b3f3a60b2c1bcf3c6489346df")
-PROXY_URL = os.environ.get("PROXY_URL", "142.111.48.253:7030:dvrpjsqr:w9z0s5imgeba")
+PROXY_URL = os.environ.get("PROXY_URL", "http://dvrpjsqr:w9z0s5imgeba@142.111.48.253:7030")
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY", "tiktok-overlay-secret-key")
