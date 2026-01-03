@@ -13,7 +13,7 @@ from httpx import Proxy
 TIKTOK_USERNAME = os.environ.get("TIKTOK_USERNAME", "aliviamor")
 FLASK_PORT = int(os.environ.get("PORT", 10000))
 SESSION_ID = os.environ.get("TIKTOK_SESSION_ID", "eaf98b4b3f3a60b2c1bcf3c6489346df")
-PROXY_URL = os.environ.get("PROXY_URL", "http://dvrpjsqr-rotate:w9z0s5imgeba@p.webshare.io:80/")
+PROXY_URL = os.environ.get("PROXY_URL", "")  # Sem proxy para teste local
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY", "tiktok-overlay-secret-key")
@@ -163,7 +163,9 @@ def run_tiktok_client():
                 await new_client.start()
                 
             except Exception as e:
-                print(f"[TikTok] Erro na conexão: {e}")
+                print(f"[TikTok] Erro na conexão: {type(e).__name__}: {e}")
+                import traceback
+                traceback.print_exc()
                 print("[TikTok] Reiniciando em 15 segundos...")
                 await asyncio.sleep(15)
 
