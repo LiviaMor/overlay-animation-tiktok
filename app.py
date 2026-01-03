@@ -79,9 +79,12 @@ if PROXY_URL:
 client = TikTokLiveClient(unique_id=TIKTOK_USERNAME, **client_kwargs)
 
 if SESSION_ID:
-    # Na versão 6.x+, o método correto é 'set_session'
-    client.web.set_session(SESSION_ID)
-    print(f"[TikTok] Usando session_id: {SESSION_ID[:10]}...")
+    # Na versão 6.x+, o método correto é 'set_session_id'
+    try:
+        client.web.set_session_id(SESSION_ID)
+        print(f"[TikTok] Usando session_id: {SESSION_ID[:10]}...")
+    except Exception as e:
+        print(f"[TikTok] Erro ao configurar session_id: {e}")
 
 @client.on(ConnectEvent)
 async def on_connect(event: ConnectEvent):
