@@ -125,10 +125,45 @@ def run_tiktok_client():
         while True:
             try:
                 print(f"[TikTok] Tentando conectar a @{TIKTOK_USERNAME}...")
-                await client.start()
+                
+                # Cria novo cliente a cada tentativa
+                new_client = TikTokLiveClient(unique_id=TIKTOK_USERNAME, **client_kwargs)
+                
+                if SESSION_ID:
+                    try:
+                        new_client.web.set_session_id(SESSION_ID)
+                    except:
+                        pass
+                
+                @new_client.on(ConnectEvent)
+                async def on_connect(event):
+                    print(f"[TikTok] CONECTADO com sucesso à live de @{TIKTOK_USERNAME}")
+
+                @new_client.on(DisconnectEvent)
+                async def on_disconnect(event):
+                    print(f"[TikTok] DESCONECTADO da live")
+
+                @new_client.on(JoinEvent)
+                async def on_join(event):
+                    unique_id = event.user.unique_id
+                    avatar_url = ""
+                    try:
+                        if hasattr(event.user, 'avatar_thumb') and event.user.avatar_thumb:
+                            thumb = event.user.avatar_thumb
+                            for attr in ['m_urls', 'url_list', 'urls']:
+                                if hasattr(thumb, attr) and getattr(thumb, attr):
+                                    avatar_url = getattr(thumb, attr)[0]
+                                    break
+                    except Exception as e:
+                        print(f"[TikTok] Erro ao processar avatar: {e}")
+                    
+                    print(f"[TikTok] Novo espectador: @{unique_id}")
+                    socketio.emit('new_viewer', {'unique_id': unique_id, 'avatar_url': avatar_url})
+                
+                await new_client.start()
+                
             except Exception as e:
-                print(f"[TikTok] Erro crítico na conexão: {e}")
-                traceback.print_exc()
+                print(f"[TikTok] Erro na conexão: {e}")
                 print("[TikTok] Reiniciando em 15 segundos...")
                 await asyncio.sleep(15)
 
