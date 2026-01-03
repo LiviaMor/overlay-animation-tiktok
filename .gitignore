@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.env
+venv/
+test_connection.py
+main.py
