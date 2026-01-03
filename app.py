@@ -41,9 +41,40 @@ def overlay():
 
 # Configuração do Cliente TikTok
 client_kwargs = {}
+
+def format_proxy_url(proxy_str):
+    """
+    Converte formatos comuns de proxy para o formato de URL exigido pelo httpx.
+    Ex: 142.111.48.253:7030:user:pass -> http://user:pass@142.111.48.253:7030
+    """
+    if not proxy_str:
+        return None
+    
+    # Se já estiver no formato correto, retorna
+    if proxy_str.startswith(('http://', 'https://', 'socks5://')):
+        return proxy_str
+    
+    # Tenta lidar com o formato IP:PORTA:USER:PASS
+    parts = proxy_str.split(':')
+    if len(parts) == 4:
+        ip, port, user, password = parts
+        return f"http://{user}:{password}@{ip}:{port}"
+    
+    # Tenta lidar com o formato IP:PORTA
+    if len(parts) == 2:
+        return f"http://{proxy_str}"
+        
+    return proxy_str
+
 if PROXY_URL:
-    print(f"[TikTok] Usando Proxy: {PROXY_URL}")
-    client_kwargs['proxy'] = Proxy(url=PROXY_URL)
+    formatted_proxy = format_proxy_url(PROXY_URL)
+    print(f"[TikTok] Proxy original: {PROXY_URL}")
+    print(f"[TikTok] Proxy formatado: {formatted_proxy.split('@')[-1] if '@' in formatted_proxy else formatted_proxy}")
+    try:
+        # Na versão 6.x+, o parâmetro correto é 'web_proxy'
+        client_kwargs['web_proxy'] = Proxy(url=formatted_proxy)
+    except Exception as e:
+        print(f"[TikTok] Erro ao configurar proxy: {e}")
 
 client = TikTokLiveClient(unique_id=TIKTOK_USERNAME, **client_kwargs)
 
