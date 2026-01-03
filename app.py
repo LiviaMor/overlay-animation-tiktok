@@ -8,7 +8,7 @@ from TikTokLive.events import JoinEvent, ConnectEvent, DisconnectEvent
 import os
 
 TIKTOK_USERNAME = os.environ.get("TIKTOK_USERNAME", "aliviamor")
-FLASK_PORT = int(os.environ.get("PORT", 5000))
+FLASK_PORT = int(os.environ.get("PORT", 10000))
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'tiktok-overlay-secret-key'
