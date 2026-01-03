@@ -35,6 +35,12 @@ def overlay():
 
 client = TikTokLiveClient(unique_id=TIKTOK_USERNAME)
 
+# Session ID para autenticação (pegar dos cookies do TikTok)
+SESSION_ID = os.environ.get("TIKTOK_SESSION_ID", "")
+if SESSION_ID:
+    client.web.set_session_id(SESSION_ID)
+    print(f"[TikTok] Usando session_id: {SESSION_ID[:10]}...")
+
 @client.on(ConnectEvent)
 async def on_connect(event: ConnectEvent):
     print(f"Conectado a live de @{TIKTOK_USERNAME}")
