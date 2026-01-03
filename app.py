@@ -66,26 +66,36 @@ async def on_join(event: JoinEvent):
     socketio.emit('new_viewer', {'unique_id': unique_id, 'avatar_url': avatar_url})
 
 def run_tiktok_client():
+    print("[TikTok] Iniciando cliente...")
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     try:
-        print(f"Conectando a live de @{TIKTOK_USERNAME}...")
+        print(f"[TikTok] Conectando a live de @{TIKTOK_USERNAME}...")
         
         async def run():
             task = await client.start(process_connect_events=True)
-            print("Conectado! Aguardando eventos...")
-            await task  # Aguarda a task do heartbeat
+            print("[TikTok] Conectado! Aguardando eventos...")
+            await task
         
         loop.run_until_complete(run())
     except Exception as e:
-        print(f"Erro ao conectar: {e}")
+        print(f"[TikTok] Erro ao conectar: {e}")
+        import traceback
+        traceback.print_exc()
 
 if __name__ == '__main__':
-    print("=" * 50)
-    print("TikTok Live Overlay")
-    print(f"Monitorando: @{TIKTOK_USERNAME}")
-    print(f"Overlay: http://localhost:{FLASK_PORT}/overlay")
-    print("=" * 50)
+    import sys
+    print("=" * 50, flush=True)
+    print("TikTok Live Overlay", flush=True)
+    print(f"Monitorando: @{TIKTOK_USERNAME}", flush=True)
+    print(f"Porta: {FLASK_PORT}", flush=True)
+    print("=" * 50, flush=True)
+    sys.stdout.flush()
+    
+    print("Iniciando thread do TikTok...", flush=True)
     tiktok_thread = threading.Thread(target=run_tiktok_client, daemon=True)
     tiktok_thread.start()
+    
+    print("Iniciando servidor Flask...", flush=True)
+    sys.stdout.flush()
     socketio.run(app, host='0.0.0.0', port=FLASK_PORT, debug=False)
