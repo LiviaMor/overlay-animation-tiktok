@@ -70,17 +70,20 @@ def run_tiktok_client():
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     try:
+        print(f"Tentando conectar à live de {TIKTOK_USER_ID}...")
         loop.run_until_complete(client.start())
     except Exception as e:
         print(f"Erro no cliente TikTok: {e}")
 
 if __name__ == '__main__':
+    print(f"Iniciando servidor para {TIKTOK_USER_ID}")
+    
     # Inicia o cliente TikTok em uma thread separada
     tiktok_thread = threading.Thread(target=run_tiktok_client, daemon=True)
     tiktok_thread.start()
     
     # Pega a porta do ambiente (Render usa PORT)
-    port = int(os.getenv("PORT", 5000))
+    port = int(os.getenv("PORT", 10000))
     
     # Inicia o servidor Flask
     socketio.run(app, host='0.0.0.0', port=port, debug=False)
