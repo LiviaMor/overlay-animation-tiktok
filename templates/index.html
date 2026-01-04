@@ -156,14 +156,27 @@
             }, DISPLAY_TIME);
         }
 
-        // Escuta o evento 'new_viewer' enviado pelo servidor
-        socket.on('new_viewer', function(data) {
+        // Escuta o evento 'join' quando alguém entra na live
+        socket.on('join', function(data) {
             console.log('Novo espectador:', data);
-            queue.push(data);
+            queue.push({
+                avatar_url: data.avatar || 'https://via.placeholder.com/300?text=👤',
+                unique_id: data.unique_id || data.nickname
+            });
             
             if (!isShowing) {
                 showNextViewer();
             }
+        });
+
+        // Escuta comentários (opcional - para debug)
+        socket.on('comment', function(data) {
+            console.log('Comentário:', data.nickname, '-', data.comment);
+        });
+
+        // Status de conexão com TikTok
+        socket.on('status', function(data) {
+            console.log('Status TikTok:', data.message);
         });
 
         // Log de conexão
