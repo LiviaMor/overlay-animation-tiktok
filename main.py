@@ -25,7 +25,7 @@ def start_tiktok_listener():
     client = TikTokLiveClient(unique_id=TIKTOK_USER_ID)
     client.add_listener("connect", on_connect)
     client.add_listener("comment", on_comment)
-    client.run()
+    client.run_in_async()
 
 if __name__ == '__main__':
     socketio.start_background_task(start_tiktok_listener)
