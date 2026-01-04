@@ -7,7 +7,7 @@ app = Flask(__name__)
 socketio = SocketIO(app)
 
 # O ID de usuário do TikTok a ser conectado
-TIKTOK_USER_ID = "@billieeilish"
+TIKTOK_USER_ID = "@aliviamor"
 
 @app.route('/')
 def index():
@@ -22,7 +22,18 @@ def on_comment(event: CommentEvent):
     socketio.emit('comment', {'nickname': event.user.nickname, 'comment': event.comment})
 
 def start_tiktok_listener():
-    client = TikTokLiveClient(unique_id=TIKTOK_USER_ID)
+    client = TikTokLiveClient(
+        unique_id=TIKTOK_USER_ID,
+        # Para resolver problemas de "Sign-in required" ou "Access Denied",
+        # você pode tentar fornecer um session_id.
+        # Obtenha-o nos cookies do seu navegador (TikTok Web) após o login.
+        # Ex: session_id="seu_session_id_aqui"
+        # session_id="SEU_SESSION_ID_AQUI"
+        #
+        # Para problemas de Captcha Invisível, certifique-se de que a
+        # biblioteca TikTokLive está atualizada (pip install TikTokLive --upgrade)
+        # e, se necessário, explore a opção 'sign_api_key' com serviços externos.
+    )
     client.add_listener("connect", on_connect)
     client.add_listener("comment", on_comment)
     client.run_in_async()
